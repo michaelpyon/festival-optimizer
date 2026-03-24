@@ -23,6 +23,10 @@
 # misc
 .DS_Store
 *.pem
+/artifacts/
+/dev.db
+/prisma/dev.db
+/.stitch/imports/
 
 # debug
 npm-debug.log*
