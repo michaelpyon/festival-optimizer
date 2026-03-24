@@ -1,0 +1,467 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum FestivalSeason {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+}
+
+enum FestivalEditionStatus {
+  CONFIRMED
+  TENTATIVE
+  HISTORIC
+}
+
+enum AirportType {
+  INTERNATIONAL
+  DOMESTIC
+  REGIONAL
+}
+
+enum SearchRunStatus {
+  DRAFT
+  RUNNING
+  COMPLETED
+  PARTIAL
+  FAILED
+}
+
+enum SearchPriority {
+  CHEAPEST
+  SMOOTHEST
+  BEST_VALUE
+}
+
+enum RoomType {
+  PRIVATE_ROOM
+  SHARED_ROOM
+  SUITE
+}
+
+enum HotelClass {
+  BUDGET
+  MIDSCALE
+  UPSCALE
+  LUXURY
+}
+
+enum HotelInventoryClass {
+  BUDGET
+  MIDSCALE
+  UPSCALE
+  LUXURY
+}
+
+enum QuoteSourceType {
+  API
+  SCRAPE
+  MANUAL_SEED
+  ESTIMATE
+}
+
+enum SurgePreset {
+  MILD
+  NORMAL
+  AGGRESSIVE
+}
+
+enum GroundTransportType {
+  AIRPORT_TO_LODGING
+  LODGING_TO_FESTIVAL
+  AIRPORT_TO_SHUTTLE_STOP
+  SHUTTLE_FARE
+  DRIVE_AND_PARK
+}
+
+enum TransportMode {
+  RIDESHARE
+  SHUTTLE
+  WALK_TRANSIT_SHUTTLE
+  RENTAL_CAR
+  TRANSIT
+  DRIVING
+}
+
+enum CostScenarioType {
+  CHEAPEST_WORKABLE
+  BALANCED
+  COMFORT
+}
+
+enum CollectionMode {
+  LIVE
+  HYBRID
+  SEEDED
+}
+
+model Festival {
+  id               String            @id @default(cuid())
+  slug             String            @unique
+  name             String
+  description      String?
+  officialWebsite  String?
+  campingAvailable Boolean           @default(false)
+  historicMonth    Int?
+  historicSeason   FestivalSeason?
+  shuttleNotes     String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  editions         FestivalEdition[]
+}
+
+model FestivalLocation {
+  id                  String                  @id @default(cuid())
+  slug                String                  @unique
+  city                String
+  stateOrRegion       String?
+  country             String
+  venue               String
+  timezone            String
+  latitude            Float
+  longitude           Float
+  parkingNotes        String?
+  neighborhoodSummary String?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  airportOptions      FestivalAirportOption[]
+  editions            FestivalEdition[]
+  lodgingZones        LodgingZone[]
+}
+
+model LodgingZone {
+  id                 String           @id @default(cuid())
+  festivalLocationId String
+  label              String
+  description        String?
+  centroidLatitude   Float?
+  centroidLongitude  Float?
+  distanceToVenueMi  Float?
+  typicalDriveMin    Int?
+  convenienceScore   Float?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  festivalLocation   FestivalLocation @relation(fields: [festivalLocationId], references: [id], onDelete: Cascade)
+  hotelQuotes        HotelQuote[]
+
+  @@unique([festivalLocationId, label])
+}
+
+model FestivalEdition {
+  id                          String                 @id @default(cuid())
+  festivalId                  String
+  locationId                  String
+  year                        Int
+  editionKey                  String                 @default("main")
+  editionName                 String?
+  status                      FestivalEditionStatus
+  isCurrentEdition            Boolean                @default(false)
+  startsAt                    DateTime?
+  endsAt                      DateTime?
+  gatesOpenLocalTime          String?
+  dailyEndLocalTime           String?
+  lastEntryLocalTime          String?
+  defaultArrivalBufferHours   Int                    @default(18)
+  defaultDepartureBufferHours Int                    @default(10)
+  metadataSourceUrl           String?
+  metadataObservedAt          DateTime?
+  metadataConfidence          Float?
+  metadataNotes               String?
+  ticketPlaceholderAmount     Decimal?
+  ticketCurrency              String                 @default("USD")
+  ticketSourceUrl             String?
+  ticketObservedAt            DateTime?
+  ticketConfidence            Float?
+  ticketNotes                 String?
+  createdAt                   DateTime               @default(now())
+  updatedAt                   DateTime               @updatedAt
+  costScenarios               CostScenario[]
+  festival                    Festival               @relation(fields: [festivalId], references: [id], onDelete: Cascade)
+  flightQuotes                FlightQuote[]
+  groundTransportQuotes       GroundTransportQuote[]
+  hotelQuotes                 HotelQuote[]
+  location                    FestivalLocation       @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  searchSelections            SearchRunFestival[]
+  shuttleOptions              ShuttleOption[]
+
+  @@unique([festivalId, year, editionKey])
+}
+
+model Airport {
+  id                      String                  @id @default(cuid())
+  iataCode                String                  @unique
+  name                    String
+  city                    String
+  stateOrRegion           String?
+  country                 String
+  timezone                String
+  latitude                Float
+  longitude               Float
+  airportType             AirportType
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+  destinationFlightQuotes FlightQuote[]           @relation("DestinationAirportQuotes")
+  festivalOptions         FestivalAirportOption[]
+  sourceFlightQuotes      FlightQuote[]           @relation("SourceAirportQuotes")
+  userPreferences         UserPreference[]        @relation("PreferenceSourceAirport")
+}
+
+model FestivalAirportOption {
+  id                   String           @id @default(cuid())
+  festivalLocationId   String
+  airportId            String
+  priority             Int              @default(1)
+  driveDistanceMi      Float?
+  driveMinutes         Int?
+  shuttleRelevant      Boolean          @default(false)
+  shuttleStopName      String?
+  shuttleStopLatitude  Float?
+  shuttleStopLongitude Float?
+  notes                String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  airport              Airport          @relation(fields: [airportId], references: [id], onDelete: Cascade)
+  festivalLocation     FestivalLocation @relation(fields: [festivalLocationId], references: [id], onDelete: Cascade)
+
+  @@unique([festivalLocationId, airportId])
+}
+
+model SearchRun {
+  id                    String                 @id @default(cuid())
+  label                 String?
+  mode                  CollectionMode         @default(HYBRID)
+  status                SearchRunStatus        @default(DRAFT)
+  startedAt             DateTime               @default(now())
+  completedAt           DateTime?
+  savedAt               DateTime?
+  failureReason         String?
+  warnings              Json?
+  collectorLog          Json?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  costScenarios         CostScenario[]
+  flightQuotes          FlightQuote[]
+  groundTransportQuotes GroundTransportQuote[]
+  hotelQuotes           HotelQuote[]
+  selectedFestivals     SearchRunFestival[]
+  userPreference        UserPreference?
+}
+
+model SearchRunFestival {
+  id                String          @id @default(cuid())
+  searchRunId       String
+  festivalEditionId String
+  displayOrder      Int             @default(0)
+  searchRun         SearchRun       @relation(fields: [searchRunId], references: [id], onDelete: Cascade)
+  festivalEdition   FestivalEdition @relation(fields: [festivalEditionId], references: [id], onDelete: Cascade)
+
+  @@unique([searchRunId, festivalEditionId])
+}
+
+model UserPreference {
+  id                         String         @id @default(cuid())
+  searchRunId                String         @unique
+  sourceCity                 String
+  sourceStateOrRegion        String?
+  sourceCountry              String         @default("United States")
+  sourceAirportId            String?
+  travelersCount             Int
+  roomType                   RoomType
+  hotelClass                 HotelClass
+  priority                   SearchPriority
+  redEyeOk                   Boolean        @default(false)
+  maxLayovers                Int            @default(1)
+  airportArrivalBufferHours  Int            @default(18)
+  returnDepartureBufferHours Int            @default(10)
+  surgePreset                SurgePreset    @default(NORMAL)
+  allowRentalCar             Boolean        @default(false)
+  ticketCostOverrideAmount   Decimal?
+  currency                   String         @default("USD")
+  notes                      String?
+  createdAt                  DateTime       @default(now())
+  updatedAt                  DateTime       @updatedAt
+  searchRun                  SearchRun      @relation(fields: [searchRunId], references: [id], onDelete: Cascade)
+  sourceAirport              Airport?       @relation("PreferenceSourceAirport", fields: [sourceAirportId], references: [id], onDelete: SetNull)
+}
+
+model FlightQuote {
+  id                     String          @id @default(cuid())
+  searchRunId            String
+  festivalEditionId      String
+  sourceAirportId        String?
+  destinationAirportId   String?
+  providerRank           Int?
+  itinerarySummary       String
+  deepLinkUrl            String?
+  outboundDepartAt       DateTime?
+  outboundArriveAt       DateTime?
+  returnDepartAt         DateTime?
+  returnArriveAt         DateTime?
+  totalDurationMinutes   Int?
+  layoverCount           Int             @default(0)
+  cabinClass             String?
+  isRedEye               Boolean         @default(false)
+  isValidForAttendance   Boolean         @default(true)
+  rawProviderName        String
+  normalizedProviderName String
+  amount                 Decimal
+  currency               String
+  taxesIncluded          Boolean?
+  sourceUrl              String
+  sourceType             QuoteSourceType
+  observedAt             DateTime
+  confidence             Float
+  notes                  String?
+  rawPayload             Json?
+  snapshotPath           String?
+  selectorLog            String?
+  flaggedBadAt           DateTime?
+  flaggedBadReason       String?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  destinationAirport     Airport?        @relation("DestinationAirportQuotes", fields: [destinationAirportId], references: [id], onDelete: SetNull)
+  festivalEdition        FestivalEdition @relation(fields: [festivalEditionId], references: [id], onDelete: Cascade)
+  searchRun              SearchRun       @relation(fields: [searchRunId], references: [id], onDelete: Cascade)
+  sourceAirport          Airport?        @relation("SourceAirportQuotes", fields: [sourceAirportId], references: [id], onDelete: SetNull)
+}
+
+model HotelQuote {
+  id                     String              @id @default(cuid())
+  searchRunId            String
+  festivalEditionId      String
+  lodgingZoneId          String?
+  providerRank           Int?
+  hotelName              String?
+  zoneLabel              String
+  inventoryClass         HotelInventoryClass
+  latitude               Float?
+  longitude              Float?
+  distanceToVenueMi      Float?
+  driveMinutesToVenue    Int?
+  isNearShuttleStop      Boolean             @default(false)
+  checkIn                DateTime
+  checkOut               DateTime
+  nightlyAmount          Decimal?
+  amount                 Decimal
+  currency               String
+  taxesIncluded          Boolean?
+  deepLinkUrl            String?
+  rawProviderName        String
+  normalizedProviderName String
+  sourceUrl              String
+  sourceType             QuoteSourceType
+  observedAt             DateTime
+  confidence             Float
+  notes                  String?
+  rawPayload             Json?
+  snapshotPath           String?
+  selectorLog            String?
+  flaggedBadAt           DateTime?
+  flaggedBadReason       String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  festivalEdition        FestivalEdition     @relation(fields: [festivalEditionId], references: [id], onDelete: Cascade)
+  lodgingZone            LodgingZone?        @relation(fields: [lodgingZoneId], references: [id], onDelete: SetNull)
+  searchRun              SearchRun           @relation(fields: [searchRunId], references: [id], onDelete: Cascade)
+}
+
+model ShuttleOption {
+  id                String                 @id @default(cuid())
+  festivalEditionId String
+  name              String
+  operatorName      String?
+  stopName          String?
+  stopLatitude      Float?
+  stopLongitude     Float?
+  fareAmount        Decimal?
+  currency          String                 @default("USD")
+  passType          String?
+  operatingNotes    String?
+  sourceUrl         String?
+  observedAt        DateTime?
+  confidence        Float?
+  isOfficial        Boolean                @default(true)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  festivalEdition   FestivalEdition        @relation(fields: [festivalEditionId], references: [id], onDelete: Cascade)
+  groundQuotes      GroundTransportQuote[]
+}
+
+model GroundTransportQuote {
+  id                     String              @id @default(cuid())
+  searchRunId            String
+  festivalEditionId      String
+  shuttleOptionId        String?
+  transportType          GroundTransportType
+  mode                   TransportMode
+  segmentLabel           String
+  originLabel            String
+  destinationLabel       String
+  distanceMi             Float?
+  durationMinutes        Int?
+  tripCount              Int                 @default(1)
+  surgePreset            SurgePreset?
+  baseFareAmount         Decimal?
+  amount                 Decimal
+  currency               String
+  taxesIncluded          Boolean?
+  rawProviderName        String
+  normalizedProviderName String
+  sourceUrl              String
+  sourceType             QuoteSourceType
+  observedAt             DateTime
+  confidence             Float
+  notes                  String?
+  rawPayload             Json?
+  snapshotPath           String?
+  estimatorAssumptions   Json?
+  flaggedBadAt           DateTime?
+  flaggedBadReason       String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  festivalEdition        FestivalEdition     @relation(fields: [festivalEditionId], references: [id], onDelete: Cascade)
+  searchRun              SearchRun           @relation(fields: [searchRunId], references: [id], onDelete: Cascade)
+  shuttleOption          ShuttleOption?      @relation(fields: [shuttleOptionId], references: [id], onDelete: SetNull)
+}
+
+model CostScenario {
+  id                   String           @id @default(cuid())
+  searchRunId          String
+  festivalEditionId    String
+  scenarioType         CostScenarioType
+  rank                 Int?
+  isRecommended        Boolean          @default(false)
+  bestForBadge         String?
+  whyRankedHere        String
+  recommendation       String
+  stayStart            DateTime
+  stayEnd              DateTime
+  travelDays           Int
+  hotelNights          Int
+  ticketAmount         Decimal?
+  flightAmount         Decimal
+  hotelAmount          Decimal
+  localTransportAmount Decimal
+  totalAmount          Decimal
+  lowAmount            Decimal?
+  highAmount           Decimal?
+  costScore            Float
+  frictionScore        Float
+  overallValueScore    Float
+  confidence           Float
+  assumptions          Json?
+  selectedQuoteIds     Json?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  festivalEdition      FestivalEdition  @relation(fields: [festivalEditionId], references: [id], onDelete: Cascade)
+  searchRun            SearchRun        @relation(fields: [searchRunId], references: [id], onDelete: Cascade)
+
+  @@unique([searchRunId, festivalEditionId, scenarioType])
+}
