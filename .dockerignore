@@ -1,0 +1,16 @@
+.git
+.github
+.next
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+.env
+.env.*
+!.env.example
+artifacts
+dev.db
+prisma/dev.db
+.stitch/imports
+coverage
