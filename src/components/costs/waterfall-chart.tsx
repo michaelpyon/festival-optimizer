@@ -73,7 +73,7 @@ export function WaterfallChart({
             formatter={(value) =>
               formatCurrency(typeof value === "number" ? value : Number(value ?? 0))
             }
-            cursor={{ fill: "rgba(120, 86, 62, 0.06)" }}
+            cursor={{ fill: "rgba(75, 63, 114, 0.08)" }}
           />
           <Bar
             dataKey="offset"
@@ -85,7 +85,7 @@ export function WaterfallChart({
             dataKey="value"
             stackId="trip"
             radius={[10, 10, 0, 0]}
-            fill="#78563e"
+            fill="var(--color-secondary-container, #4b3f72)"
             isAnimationActive={false}
           />
         </BarChart>
