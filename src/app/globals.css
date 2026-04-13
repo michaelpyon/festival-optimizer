@@ -10,6 +10,8 @@
   --font-sans: var(--font-manrope);
   --font-mono: var(--font-ibm-plex-mono);
   --font-heading: var(--font-newsreader);
+
+  /* shadcn tokens */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,6 +48,60 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* MD3 surface tokens */
+  --color-surface: #131313;
+  --color-surface-dim: #131313;
+  --color-surface-bright: #3a3939;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #201f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353534;
+  --color-surface-variant: #353534;
+  --color-surface-tint: #d5c5a9;
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #cec5b9;
+  --color-on-background: #e5e2e1;
+  --color-inverse-surface: #e5e2e1;
+  --color-inverse-on-surface: #313030;
+  --color-inverse-primary: #695d46;
+  --color-outline: #979085;
+  --color-outline-variant: #4b463d;
+
+  /* MD3 primary tokens */
+  --color-on-primary: #392f1b;
+  --color-primary-container: #d4c4a8;
+  --color-on-primary-container: #5c513b;
+  --color-primary-fixed: #f1e0c3;
+  --color-primary-fixed-dim: #d5c5a9;
+  --color-on-primary-fixed: #231a08;
+  --color-on-primary-fixed-variant: #504530;
+
+  /* MD3 secondary tokens */
+  --color-secondary-container: #4b3f72;
+  --color-on-secondary: #34285a;
+  --color-on-secondary-container: #bbade8;
+  --color-on-secondary-fixed: #1f1244;
+  --color-on-secondary-fixed-variant: #4b3f72;
+  --color-secondary-fixed: #e8deff;
+  --color-secondary-fixed-dim: #cdbefa;
+
+  /* MD3 tertiary tokens */
+  --color-tertiary: #c4e8f3;
+  --color-tertiary-container: #a8ccd6;
+  --color-on-tertiary: #10353d;
+  --color-on-tertiary-container: #355760;
+  --color-on-tertiary-fixed: #001f26;
+  --color-on-tertiary-fixed-variant: #294c54;
+  --color-tertiary-fixed: #c5e9f3;
+  --color-tertiary-fixed-dim: #a9ccd7;
+
+  /* MD3 error tokens */
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
 }
 
 :root {
@@ -57,8 +113,8 @@
   --popover-foreground: #e5e2e1;
   --primary: #f1e0c3;
   --primary-foreground: #231a08;
-  --secondary: #4b3f72;
-  --secondary-foreground: #e8deff;
+  --secondary: #cdbefa;
+  --secondary-foreground: #34285a;
   --muted: #201f1f;
   --muted-foreground: #cec5b9;
   --accent: #2a2a2a;
@@ -92,8 +148,8 @@
   --popover-foreground: #e5e2e1;
   --primary: #f1e0c3;
   --primary-foreground: #231a08;
-  --secondary: #4b3f72;
-  --secondary-foreground: #e8deff;
+  --secondary: #cdbefa;
+  --secondary-foreground: #34285a;
   --muted: #201f1f;
   --muted-foreground: #cec5b9;
   --accent: #2a2a2a;
@@ -125,43 +181,48 @@
     @apply font-sans;
   }
   body {
-    @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(circle at top left, rgb(75 63 114 / 0.24), transparent 30%),
-      radial-gradient(circle at bottom right, rgb(168 204 214 / 0.12), transparent 28%),
-      linear-gradient(180deg, rgb(28 27 27 / 0.95), transparent 20%);
-    background-attachment: fixed;
+    @apply bg-surface text-on-surface;
   }
   ::selection {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-primary/30;
   }
-  h1,
-  h2,
-  h3,
-  h4 {
+  h1, h2, h3, h4 {
     @apply font-heading;
   }
 }
 
 @layer components {
   .glass-panel {
-    background: rgb(53 53 52 / 0.42);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-  }
-
-  .editorial-shell {
-    @apply relative overflow-hidden rounded-[2rem] bg-card;
-    box-shadow: 0 24px 60px rgb(0 0 0 / 0.28);
+    background: rgb(53 53 52 / 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .editorial-kicker {
-    @apply text-[0.68rem] font-semibold uppercase text-primary;
-    letter-spacing: 0.24em;
+    @apply text-[10px] font-bold uppercase tracking-[0.3em] text-primary;
   }
 
-  .soft-surface {
-    @apply bg-card;
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.02);
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

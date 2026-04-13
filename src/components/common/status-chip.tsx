@@ -2,9 +2,9 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const toneClasses = {
-  confirmed: "border-transparent bg-[#a8ccd6] text-[#001f26]",
-  tentative: "border-transparent bg-[#4b3f72] text-[#e8deff]",
-  historic: "border-transparent bg-[#2a2a2a] text-[#cec5b9]",
+  confirmed: "border-transparent bg-tertiary-container text-on-tertiary-fixed",
+  tentative: "border-transparent bg-secondary-container text-secondary-fixed",
+  historic: "border-transparent bg-surface-container-high text-on-surface-variant",
 } as const;
 
 export function StatusChip({

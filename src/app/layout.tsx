@@ -17,6 +17,7 @@ const headingFont = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +37,13 @@ export default function RootLayout({
       lang="en"
       className={`dark ${bodyFont.variable} ${monoFont.variable} ${headingFont.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="flex min-h-full flex-col bg-surface text-on-surface">
         {children}
       </body>
     </html>
