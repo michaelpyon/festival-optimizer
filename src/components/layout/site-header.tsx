@@ -37,10 +37,10 @@ export function SiteHeader() {
         })}
       </div>
       <div className="flex items-center gap-4">
-        <button className="p-2 rounded-full hover:bg-surface-variant/50 transition-all duration-300 text-primary">
+        <button className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors duration-300 text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <span className="material-symbols-outlined">notifications</span>
         </button>
-        <button className="p-2 rounded-full hover:bg-surface-variant/50 transition-all duration-300 text-primary">
+        <button className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors duration-300 text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <span className="material-symbols-outlined">settings</span>
         </button>
         <div className="h-10 w-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/20 flex items-center justify-center">

@@ -122,7 +122,7 @@ export default async function CostBreakdownPage({
             </div>
             <Link
               href={`/festivals/${scenario.festivalEdition.festival.slug}`}
-              className="w-full mt-8 bg-primary text-on-primary font-bold uppercase tracking-[0.2em] text-xs py-4 rounded-full hover:scale-[1.02] active:scale-95 transition-all text-center block"
+              className="w-full mt-8 bg-primary text-on-primary font-bold uppercase tracking-[0.2em] text-xs py-4 rounded-full hover:scale-[1.02] active:scale-95 transition-colors text-center block"
             >
               View Festival Detail
             </Link>

@@ -57,10 +57,10 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             )}
           </div>
           <div className="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-full self-start md:self-auto">
-            <button className="px-6 py-2.5 rounded-full bg-surface-container-highest text-primary text-sm font-medium transition-all">
+            <button className="px-6 py-2.5 rounded-full bg-surface-container-highest text-primary text-sm font-medium transition-colors">
               Grid Perspective
             </button>
-            <button className="px-6 py-2.5 rounded-full text-on-surface-variant text-sm font-medium hover:text-on-surface transition-all">
+            <button className="px-6 py-2.5 rounded-full text-on-surface-variant text-sm font-medium hover:text-on-surface transition-colors">
               Analysis View
             </button>
           </div>
@@ -84,7 +84,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
                 {runData.recommendedRow.scenarioId && (
                   <Link
                     href={`/costs/${runData.recommendedRow.scenarioId}`}
-                    className="bg-primary text-on-primary font-bold uppercase tracking-[0.2em] text-xs py-4 px-8 rounded-full hover:scale-[1.02] active:scale-95 transition-all inline-block"
+                    className="bg-primary text-on-primary font-bold uppercase tracking-[0.2em] text-xs py-4 px-8 rounded-full hover:scale-[1.02] active:scale-95 transition-colors inline-block"
                   >
                     Open Cost Breakdown
                   </Link>
