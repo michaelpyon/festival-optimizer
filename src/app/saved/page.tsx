@@ -47,7 +47,7 @@ export default async function SavedTripsPage() {
                 {trips.map((trip) => (
                   <div
                     key={trip.id}
-                    className="group relative overflow-hidden rounded-xl bg-surface-container-low p-1 transition-all duration-500 hover:bg-surface-container-high shadow-xl"
+                    className="group relative overflow-hidden rounded-xl bg-surface-container-low p-1 transition-colors duration-500 hover:bg-surface-container-high shadow-xl"
                   >
                     <div className="p-6">
                       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
@@ -80,7 +80,7 @@ export default async function SavedTripsPage() {
                         </span>
                         <Link
                           href={`/compare?run=${trip.id}`}
-                          className="h-12 w-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300"
+                          className="h-12 w-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors duration-300"
                         >
                           <span className="material-symbols-outlined">arrow_forward</span>
                         </Link>

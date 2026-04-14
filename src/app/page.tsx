@@ -198,7 +198,7 @@ export default async function Home() {
           </p>
           <Link
             href="/"
-            className="bg-primary text-on-primary h-16 px-10 rounded-full text-lg font-bold hover:bg-primary-container transition-all inline-flex items-center gap-3"
+            className="bg-primary text-on-primary h-16 px-10 rounded-full text-lg font-bold hover:bg-primary-container transition-colors inline-flex items-center gap-3"
           >
             Back to search
             <span className="material-symbols-outlined">arrow_upward</span>
