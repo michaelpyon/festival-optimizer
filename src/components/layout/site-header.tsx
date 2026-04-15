@@ -25,7 +25,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className={`font-heading tracking-tight transition-colors ${
+              className={`font-heading tracking-tight py-2 transition-colors ${
                 isActive
                   ? "text-primary border-b-2 border-primary pb-1"
                   : "text-on-surface-variant hover:text-primary"

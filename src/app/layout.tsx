@@ -21,7 +21,7 @@ const headingFont = Newsreader({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://festival-companion.local"),
+  metadataBase: new URL("https://festival-optimizer.vercel.app"),
   title: "Festival Companion",
   description:
     "Compare music festivals by total trip cost, convenience, and travel friction from your home city or airport.",

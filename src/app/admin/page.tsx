@@ -73,7 +73,7 @@ function QuoteReviewCard({
         <p className="text-sm text-on-surface-variant mb-3">{quote.notes}</p>
       )}
       <div className="flex flex-wrap gap-3 text-sm mb-3">
-        <a href={quote.sourceUrl} target="_blank" rel="noreferrer" className="text-primary font-medium hover:underline">
+        <a href={quote.sourceUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-[44px] items-center text-primary font-medium hover:underline">
           Open source
         </a>
       </div>

@@ -1410,7 +1410,7 @@ export const festivalCatalog: SeedFestivalEntry[] = [
       {
         label: "Eixample",
         description:
-          "Balanced central-city hotel inventory with a straightforward metro ride to the grounds.",
+          "Balanced central-city hotel inventory with a clean metro ride to the grounds.",
         centroidLatitude: 41.3917,
         centroidLongitude: 2.1649,
         distanceToVenueMi: 4.4,
