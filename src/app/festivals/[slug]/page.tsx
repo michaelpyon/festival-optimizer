@@ -292,8 +292,11 @@ export default async function FestivalDetailPage({
                       </p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-primary" />
-                          <span className="text-[10px] uppercase tracking-widest text-on-surface-variant">High Reliability</span>
+                          <span className={`w-2 h-2 rounded-full ${option.isOfficial ? "bg-primary" : "bg-tertiary-container"}`} />
+                          <span className="text-[10px] uppercase tracking-widest text-on-surface-variant">
+                            {option.isOfficial ? "Official shuttle" : "Unofficial"}
+                            {option.confidence != null ? ` • ${formatConfidence(option.confidence)} confidence` : ""}
+                          </span>
                         </div>
                         <span className="font-heading text-xl text-primary">
                           {formatCurrency(option.fareAmount?.toString() ?? null, option.currency)}

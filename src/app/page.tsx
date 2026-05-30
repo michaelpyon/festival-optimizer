@@ -162,7 +162,7 @@ export default async function Home() {
             <span className="material-symbols-outlined text-3xl mb-6 text-primary">confirmation_number</span>
             <h4 className="font-heading text-2xl text-on-surface mb-4">3. Pick yours and go deep</h4>
             <p className="text-sm text-on-surface-variant leading-relaxed">
-              Click any festival to see the full cost breakdown, transport options, and booking timeline.
+              Click any festival to see the full cost breakdown, transport options, and airport and lodging zones.
             </p>
           </div>
         </div>
@@ -186,11 +186,11 @@ export default async function Home() {
             </div>
             <div className="relative z-10 mt-20">
               <div className="inline-flex items-center gap-2 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
-                High Confidence
+                Confidence Scored
               </div>
-              <h3 className="text-3xl font-heading font-medium text-primary mb-4">Price Prediction</h3>
+              <h3 className="text-3xl font-heading font-medium text-primary mb-4">Source Trail On Every Number</h3>
               <p className="text-on-surface-variant">
-                Historical trends tell you exactly when to book for the optimal cost-to-experience ratio.
+                Each figure carries its provider, the date it was observed, and a confidence label, so you can see exactly which numbers are live quotes and which are labeled estimates.
               </p>
             </div>
           </div>
