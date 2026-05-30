@@ -6,9 +6,12 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { startComparisonAction } from "@/app/actions/search";
 import { PendingSubmitButton } from "@/components/common/pending-submit-button";
 import { getLandingData } from "@/lib/catalog";
+import { getHomepageExample } from "@/lib/homepage-example";
+import { formatCurrency } from "@/lib/format";
 
 export default async function Home() {
   const data = await getLandingData();
+  const example = getHomepageExample();
 
   // Grab the first 6 festival edition IDs for auto-comparison
   const autoCompareIds = data.festivalOptions.slice(0, 6).map((f) => f.id);
@@ -31,9 +34,50 @@ export default async function Home() {
           <h1 className="text-6xl md:text-8xl font-heading font-medium text-primary tracking-tight leading-tight mb-6">
             Where are you <br /><span className="italic">flying from?</span>
           </h1>
-          <p className="text-xl text-on-surface-variant max-w-xl mx-auto mb-12">
+          <p className="text-xl text-on-surface-variant max-w-xl mx-auto mb-10">
             Enter your city. We'll price out flights, hotels, transport, and tickets for every festival in the catalog.
           </p>
+
+          {/* Concrete example so the per-person value is visible before any input */}
+          {example ? (
+            <div className="glass-panel max-w-2xl mx-auto mb-10 rounded-3xl border border-outline-variant/10 p-6 text-left shadow-xl">
+              <div className="flex items-center justify-between gap-3 mb-5">
+                <p className="editorial-kicker">
+                  Example from {example.originIata}, {example.travelers} travelers
+                </p>
+                <span className="rounded-full bg-tertiary-container text-on-tertiary-container px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                  Estimate
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {example.festivals.map((festival) => (
+                  <Link
+                    key={festival.slug}
+                    href={`/festivals/${festival.slug}`}
+                    className="group flex min-h-[88px] flex-col justify-between rounded-2xl bg-surface-container-low p-5 transition-colors hover:bg-surface-container-high"
+                  >
+                    <div>
+                      <p className="font-heading text-lg font-medium text-on-surface group-hover:text-primary transition-colors">
+                        {festival.name}
+                      </p>
+                      <p className="text-xs text-on-surface-variant">
+                        {festival.cityLabel}
+                      </p>
+                    </div>
+                    <div className="mt-3 flex items-baseline gap-2">
+                      <span className="text-3xl font-heading font-medium text-primary tabular-nums">
+                        {formatCurrency(festival.perPerson)}
+                      </span>
+                      <span className="text-sm text-on-surface-variant">per person</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <p className="mt-4 text-xs text-outline">
+                Estimated all-in per person across {example.travelers} travelers: flights, hotel, ground transport, and a current ticket placeholder. Run your own city for live numbers.
+              </p>
+            </div>
+          ) : null}
 
           {/* Single City Search */}
           <form action={startComparisonAction} className="glass-panel p-3 rounded-full shadow-2xl max-w-2xl mx-auto border border-outline-variant/10">
@@ -53,13 +97,14 @@ export default async function Home() {
                   name="sourceCity"
                   type="text"
                   required
+                  defaultValue="Los Angeles, CA"
                   placeholder="Los Angeles, CA"
                   className="bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-lg font-medium placeholder:text-outline-variant w-full"
                 />
               </div>
               <PendingSubmitButton
-                label="Find Festivals"
-                pendingLabel="Searching..."
+                label="Get my per-person total"
+                pendingLabel="Pricing your trip..."
                 size="lg"
                 className="rounded-full px-8 h-14 text-sm"
               />
@@ -67,7 +112,10 @@ export default async function Home() {
           </form>
 
           <p className="text-sm text-outline mt-6">
-            Compares the top {autoCompareIds.length} festivals with balanced pricing. Takes about 30 seconds.
+            Prices the top {autoCompareIds.length} festivals per person with balanced flights and hotels. Takes about 30 seconds.{" "}
+            <Link href="#catalog" className="text-primary underline-offset-4 hover:underline">
+              Or browse the catalog.
+            </Link>
           </p>
         </div>
       </section>
@@ -151,7 +199,7 @@ export default async function Home() {
       </section>
 
       {/* Festival Preview Grid */}
-      <section className="py-24 bg-surface-container-low/30">
+      <section id="catalog" className="py-24 bg-surface-container-low/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
             <div>
