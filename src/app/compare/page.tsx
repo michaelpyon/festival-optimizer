@@ -19,12 +19,43 @@ type ComparePageProps = {
 
 export default async function ComparePage({ searchParams }: ComparePageProps) {
   const resolvedSearchParams = parseCompareSearchParams(await searchParams);
-  const runData = resolvedSearchParams.run
-    ? await getCompareRunData(resolvedSearchParams.run, resolvedSearchParams.sort)
-    : null;
-  const rows = !runData
-    ? await getCompareCatalog(resolvedSearchParams.festival)
-    : null;
+
+  let runData: Awaited<ReturnType<typeof getCompareRunData>> | null = null;
+  let rows: Awaited<ReturnType<typeof getCompareCatalog>> | null = null;
+  let catalogUnavailable = false;
+
+  try {
+    runData = resolvedSearchParams.run
+      ? await getCompareRunData(resolvedSearchParams.run, resolvedSearchParams.sort)
+      : null;
+    rows = !runData
+      ? await getCompareCatalog(resolvedSearchParams.festival)
+      : null;
+  } catch {
+    // The catalog read can fail when the database has not been provisioned or
+    // seeded for this environment yet. Render a calm warming-up state instead
+    // of a raw server error so the link stays shareable.
+    catalogUnavailable = true;
+  }
+
+  if (catalogUnavailable) {
+    return (
+      <SiteShell>
+        <div className="pt-32 pb-24 px-4 md:px-8 max-w-3xl mx-auto min-h-screen">
+          <span className="editorial-kicker mb-4 block">Global Circuit Comparison</span>
+          <h1 className="text-5xl md:text-6xl font-heading font-bold text-on-surface mb-6 leading-[0.95] tracking-tighter">
+            The catalog is warming up
+          </h1>
+          <p className="text-on-surface-variant text-lg leading-relaxed mb-10 max-w-xl">
+            The festival data for this environment is still being provisioned. Comparisons price the full trip, flights, lodging, transport, and tickets, per person. Check back in a moment, or start from your home city.
+          </p>
+          <Link href="/" className={buttonLinkVariants()}>
+            Back to start
+          </Link>
+        </div>
+      </SiteShell>
+    );
+  }
 
   const sortOptions = [
     { key: "overall", label: "Overall" },

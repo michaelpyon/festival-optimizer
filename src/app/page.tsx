@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { StatusChip } from "@/components/common/status-chip";
@@ -8,6 +9,26 @@ import { PendingSubmitButton } from "@/components/common/pending-submit-button";
 import { getLandingData } from "@/lib/catalog";
 import { getHomepageExample } from "@/lib/homepage-example";
 import { formatCurrency } from "@/lib/format";
+
+const HOME_TITLE = "Festival Optimizer · per-person trip totals for every festival";
+const HOME_DESCRIPTION =
+  "Type your city. See flights, hotel, transport, and tickets priced per person for every festival in the catalog. Source trail and confidence on every number.";
+
+export const metadata: Metadata = {
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+  },
+};
 
 export default async function Home() {
   const data = await getLandingData();
@@ -127,7 +148,7 @@ export default async function Home() {
             <span className="material-symbols-outlined text-3xl mb-6 text-primary">search</span>
             <h4 className="font-heading text-2xl text-on-surface mb-4">1. Enter your city</h4>
             <p className="text-sm text-on-surface-variant leading-relaxed">
-              Type where you're flying from. The engine prices real flights from your nearest airports.
+              Type where you're flying from. The engine quotes live flights when possible and falls back to a labeled estimator.
             </p>
           </div>
           <div className="bg-surface-container-low p-10">
