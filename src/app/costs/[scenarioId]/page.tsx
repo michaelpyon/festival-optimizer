@@ -1,13 +1,49 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
+import { CopyLinkButton } from "@/components/costs/copy-link-button";
 import { WaterfallChart } from "@/components/costs/waterfall-chart";
 import { SiteShell } from "@/components/layout/site-shell";
 import { getCostScenarioDetail } from "@/lib/catalog";
 import { formatConfidence, formatCurrency } from "@/lib/format";
+import { buildProposalSummary } from "@/lib/proposal";
 
 type CostBreakdownPageProps = {
   params: Promise<{ scenarioId: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: CostBreakdownPageProps): Promise<Metadata> {
+  const { scenarioId } = await params;
+  const data = await getCostScenarioDetail(scenarioId).catch(() => null);
+
+  if (!data) {
+    return {
+      title: "Trip proposal not found · Festival Optimizer",
+      description:
+        "This festival trip proposal could not be found. Run a comparison to build a fresh one.",
+    };
+  }
+
+  const summary = buildProposalSummary(data);
+
+  return {
+    title: `${summary.ogTitle} · Festival Optimizer`,
+    description: summary.ogDescription,
+    openGraph: {
+      type: "website",
+      title: summary.ogTitle,
+      description: summary.ogDescription,
+      url: `/costs/${scenarioId}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: summary.ogTitle,
+      description: summary.ogDescription,
+    },
+  };
+}
 
 export default async function CostBreakdownPage({
   params,
@@ -40,6 +76,7 @@ export default async function CostBreakdownPage({
   }
 
   const { scenario, selectedSources, tripWindowLabel, preferenceSummary } = data;
+  const proposal = buildProposalSummary(data);
   const assumptions =
     scenario.assumptions && typeof scenario.assumptions === "object"
       ? Object.entries(scenario.assumptions as Record<string, unknown>)
@@ -64,21 +101,54 @@ export default async function CostBreakdownPage({
     <SiteShell>
       <div className="pt-32 px-6 md:px-12 max-w-7xl mx-auto">
         {/* Header */}
-        <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="max-w-2xl">
-            <span className="editorial-kicker mb-2 block">Financial Blueprint</span>
-            <h1 className="font-heading text-5xl md:text-7xl font-light text-on-surface tracking-tight leading-none mb-4">
-              The Cost <br /><span className="italic text-primary">Evolution</span>
-            </h1>
-            <p className="text-on-surface-variant text-lg max-w-md leading-relaxed">
-              {scenario.festivalEdition.festival.name} • {tripWindowLabel} • {preferenceSummary}
-            </p>
+        <header className="mb-10">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <span className="editorial-kicker block">Trip Proposal</span>
+            {/* Scenario Type Switcher */}
+            <div className="bg-surface-container-lowest p-1 rounded-full flex items-center shadow-lg border border-outline-variant/10">
+              <span className="px-8 py-2 rounded-full text-xs uppercase tracking-widest bg-surface-container-highest text-primary shadow-sm">
+                {scenario.scenarioType.replaceAll("_", " ").toLowerCase()}
+              </span>
+            </div>
           </div>
-          {/* Scenario Type Switcher */}
-          <div className="bg-surface-container-lowest p-1 rounded-full flex items-center shadow-lg border border-outline-variant/10 self-start md:self-auto">
-            <span className="px-8 py-2 rounded-full text-xs uppercase tracking-widest bg-surface-container-highest text-primary shadow-sm">
-              {scenario.scenarioType.replaceAll("_", " ").toLowerCase()}
-            </span>
+
+          {/* Hero: per-person total is the single most prominent element */}
+          <div className="bg-surface-container-low rounded-3xl p-8 md:p-12">
+            <p className="text-xs uppercase tracking-[0.3em] text-on-surface-variant mb-4">
+              Estimated cost per person
+            </p>
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+              <span className="font-heading font-bold text-primary tracking-tight leading-none text-7xl md:text-9xl">
+                {proposal.perPersonLabel}
+              </span>
+              <span className="font-heading text-2xl md:text-4xl text-on-surface-variant">
+                / person
+              </span>
+            </div>
+            <p className="mt-6 text-on-surface text-xl md:text-2xl font-medium">
+              {scenario.festivalEdition.festival.name}
+              {proposal.originIata ? ` from ${proposal.originIata}` : ""}
+            </p>
+            <p className="mt-2 text-on-surface-variant text-base leading-relaxed max-w-xl">
+              {formatCurrency(scenario.totalAmount.toString())} total across {proposal.travelers}{" "}
+              {proposal.travelers === 1 ? "traveler" : "travelers"} • {tripWindowLabel}
+            </p>
+            <p className="mt-1 text-xs text-outline max-w-xl leading-relaxed">
+              {preferenceSummary}
+            </p>
+            <p className="mt-5 inline-flex items-center gap-2 text-xs text-on-surface-variant">
+              <span className="material-symbols-outlined text-base text-tertiary">info</span>
+              Estimated figures from observed flight, lodging, transport, and ticket sources. See the source trail below.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <CopyLinkButton />
+              <Link
+                href={`/festivals/${scenario.festivalEdition.festival.slug}`}
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.2em] text-on-primary transition-colors hover:scale-[1.02] active:scale-95"
+              >
+                View festival detail
+              </Link>
+            </div>
           </div>
         </header>
 

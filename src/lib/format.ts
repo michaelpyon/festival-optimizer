@@ -60,6 +60,20 @@ export function formatDateTimeLabel(value: Date | string | null | undefined) {
   return format(date, "MMM d, yyyy h:mm a");
 }
 
+export function perPersonAmount(
+  total: number | string | null | undefined,
+  travelers: number | null | undefined,
+) {
+  const totalValue = toNumber(total);
+  const count = travelers && travelers > 0 ? Math.floor(travelers) : 1;
+
+  if (totalValue === null) {
+    return null;
+  }
+
+  return Math.round(totalValue / count);
+}
+
 export function formatAirportLabel(
   city: string,
   iataCode: string,

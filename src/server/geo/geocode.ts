@@ -10,25 +10,33 @@ export async function geocodePlace(query: string) {
   url.searchParams.set("format", "jsonv2");
   url.searchParams.set("limit", "1");
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      "user-agent":
-        "Festival Companion Geocoder/1.0 (+https://festival-companion.local)",
-      accept: "application/json",
-    },
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(url.toString(), {
+      headers: {
+        "user-agent":
+          "Festival Companion Geocoder/1.0 (+https://festival-companion.local)",
+        accept: "application/json",
+      },
+      cache: "no-store",
+    });
 
-  const payload = (await response.json()) as NominatimSearchResult;
-  const first = payload[0];
+    if (!response.ok) {
+      return null;
+    }
 
-  if (!first) {
+    const payload = (await response.json()) as NominatimSearchResult;
+    const first = payload[0];
+
+    if (!first) {
+      return null;
+    }
+
+    return {
+      latitude: Number(first.lat),
+      longitude: Number(first.lon),
+      label: first.display_name,
+    };
+  } catch {
     return null;
   }
-
-  return {
-    latitude: Number(first.lat),
-    longitude: Number(first.lon),
-    label: first.display_name,
-  };
 }
