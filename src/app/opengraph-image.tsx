@@ -3,7 +3,16 @@ import { ImageResponse } from "next/og";
 import { formatCurrency } from "@/lib/format";
 import { getHomepageExample } from "@/lib/homepage-example";
 
-export const alt = "Compare festivals by real trip cost, per person";
+function buildAlt() {
+  const example = getHomepageExample();
+  if (!example || example.festivals.length !== 2) {
+    return "Festival Optimizer: compare festivals by total trip cost, per person.";
+  }
+  const [first, second] = example.festivals;
+  return `Festival Optimizer estimate: ${first.name} about ${formatCurrency(first.perPerson)} per person and ${second.name} about ${formatCurrency(second.perPerson)} per person, ${example.travelers} travelers from ${example.originIata}, all in across flights, hotel, transport, and tickets.`;
+}
+
+export const alt = buildAlt();
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

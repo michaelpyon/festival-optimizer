@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Manrope, Newsreader } from "next/font/google";
 import "./globals.css";
 
@@ -28,6 +28,13 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
+};
+
+// Matches the dark surface used across the app and in the share card, so mobile
+// browser chrome and link previews stay on brand.
+export const viewport: Viewport = {
+  themeColor: "#0e0e0e",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({

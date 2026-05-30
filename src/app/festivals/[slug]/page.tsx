@@ -44,7 +44,37 @@ export default async function FestivalDetailPage({
   params,
 }: FestivalDetailPageProps) {
   const { slug } = await params;
-  const festival = await getFestivalDetailData(slug);
+
+  let festival: Awaited<ReturnType<typeof getFestivalDetailData>> | null = null;
+  let catalogUnavailable = false;
+
+  try {
+    festival = await getFestivalDetailData(slug);
+  } catch {
+    // The catalog read can fail when the database has not been provisioned or
+    // seeded for this environment yet. Render a calm warming-up state instead
+    // of a raw server error so the shared link stays usable.
+    catalogUnavailable = true;
+  }
+
+  if (catalogUnavailable) {
+    return (
+      <SiteShell>
+        <div className="pt-32 pb-24 px-4 md:px-8 max-w-3xl mx-auto min-h-screen">
+          <span className="editorial-kicker mb-4 block">Festival Profile</span>
+          <h1 className="text-5xl md:text-6xl font-heading font-bold text-on-surface mb-6 leading-[0.95] tracking-tighter">
+            This profile is warming up
+          </h1>
+          <p className="text-on-surface-variant text-lg leading-relaxed mb-10 max-w-xl">
+            The festival data for this environment is still being provisioned. Profiles cover dates, airports, lodging zones, and the full per-person trip math. Check back in a moment, or start from your home city.
+          </p>
+          <Link href="/" className={buttonLinkVariants()}>
+            Back to start
+          </Link>
+        </div>
+      </SiteShell>
+    );
+  }
 
   if (!festival) {
     notFound();

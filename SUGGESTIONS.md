@@ -52,7 +52,7 @@ data when it may be heuristic.
 
 ## Prioritized plan
 
-### Shipped this pass (additive, build-verified)
+### Shipped wave 1 (additive, build-verified)
 
 1. **Home opengraph-image route** (`src/app/opengraph-image.tsx`).
    Why: the evangelist's screenshot moment is the per-person number. The current
@@ -70,15 +70,22 @@ data when it may be heuristic.
    carefully estimated, matching the rest of the app's source-trail story.
    Effort: S. Deploy needed: Y.
 
+### Shipped wave 2 (additive, build-verified)
+
+5. **OG image alt + theme color** (DONE). `src/app/opengraph-image.tsx` now
+   builds its `alt` from the same homepage example so it names both festivals
+   and their per-person estimate instead of a generic string. `src/app/layout.tsx`
+   gained a Next 16 `viewport` export with `themeColor` `#0e0e0e` and
+   `colorScheme: "dark"` so mobile browser chrome and previews stay on brand.
+6. **`/festivals/[slug]` graceful fallback** (DONE). Wrapped the Prisma detail
+   read in try/catch and render a calm "this profile is warming up" state inside
+   `SiteShell` when the database is not provisioned or seeded on the host, instead
+   of a raw Next 500. A genuinely missing festival still returns `notFound()`.
+   `/compare` already got this last pass; the two shareable downstream routes now
+   match.
+
 ### Quick wins still to do (S, additive, safe)
 
-5. **OG image alt + theme color**: add `themeColor` + ensure `alt` text matches
-   the per-person example. Effort: S. Deploy needed: Y.
-6. **DONE this pass for `/compare`**: wrapped the Prisma catalog reads in
-   try/catch and render a calm "catalog is warming up" state inside the existing
-   `SiteShell` instead of a raw Next 500 when the database is not provisioned or
-   seeded on the host. `/festivals/[slug]` still needs the same treatment.
-   Effort: S. Deploy needed: Y to see it live.
 7. **Twitter site handle** in layout metadata once Michael picks one.
 
 ### Bigger bets (M to L, flagged for Michael)
@@ -134,7 +141,7 @@ file to a hosted database (see Known tradeoffs in README).
 
 ## Guardrail notes
 
-- No deploys this pass.
+- No deploys, wave 1 or wave 2.
 - No invented facts. The illustrative LAX example is the same math the live
-  engine uses, labeled "Estimate".
+  engine uses, labeled "Estimate". The wave 2 alt text reuses those same numbers.
 - All changes additive. No rebuild.
