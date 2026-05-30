@@ -197,6 +197,15 @@ Optional:
 - the admin refresh tool updates current-edition metadata but does not yet maintain a historical observation table
 - SQLite is excellent for local iteration, but Postgres should back shared or concurrent environments
 
+## Next.js 16 notes
+
+`AGENTS.md` warns that this is not the Next.js most agents were trained on. Here are the deprecations and behavior changes that actually shaped the code in this repo, so you do not relearn them the hard way:
+
+1. Route `params` and `searchParams` are async. Every dynamic route types them as a Promise and awaits them, for example `params: Promise<{ slug: string }>` then `const { slug } = await params`. See `src/app/festivals/[slug]/page.tsx`, `src/app/costs/[scenarioId]/page.tsx`, `src/app/compare/page.tsx`, and `src/app/admin/page.tsx`.
+2. `themeColor` and `colorScheme` moved out of the `metadata` export into a separate `viewport` export. `src/app/layout.tsx` exports both `metadata` and `viewport`; putting `themeColor` back inside `metadata` triggers a build warning.
+3. Builds run on Turbopack by default. `npm run build` compiles and type-checks in one pass.
+4. Prisma config lives in `prisma.config.ts`, not in `package.json`. Schema migrations are applied by the custom runner in `scripts/apply-migrations.ts` (using Node's built-in `node:sqlite`) because the local Prisma migration engine was unreliable in this environment. Standard Prisma models and the generated client are otherwise used as normal.
+
 ## Testing
 
 Vitest covers:
